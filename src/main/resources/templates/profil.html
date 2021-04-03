@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="hu" layout:decorator="layouts/main">
+<head>
+	<title>Profil</title>
+</head>
+<body>
+
+	<div layout:fragment="content">
+		
+		<div class="container mt-4">
+			<div class="row d-flex justify-content-center">
+				<div class="col-sm-6">
+					<div th:if="${#httpServletRequest.getParameter('succ') == '1'}">
+						<div class="alert alert-success" role="alert" th:text="#{visszaemaulsuccess}">
+						  A visszaállító e-mailt elküldtük az Ön e-mail címére.
+						</div>
+					</div>
+					<div th:if="${#httpServletRequest.getParameter('succ') == '2'}">
+						<div class="alert alert-danger" role="alert" th:text="#{visszaemailunsucc}">
+						  A visszaállító e-mail elküldése sikertelen.
+						</div>
+					</div>
+					<div th:if="${#httpServletRequest.getParameter('err') == '1'}">
+						<div class="alert alert-danger" role="alert" th:text="#{vanrogkerelem}">
+						  Már van rögzített kérelem.
+						</div>
+					</div>
+					<div th:if="${#httpServletRequest.getParameter('err') == '2'}">
+						<div class="alert alert-danger" role="alert" th:text="#{nincsfelhaszn}">
+						  Nincs ilyen felhasználó
+						</div>
+					</div>
+					<div th:if="${#httpServletRequest.getParameter('err') == '3'}">
+						<div class="alert alert-danger" role="alert" th:text="#{nemmegfkerelem}">
+						  Nem megfelelõen elküldött kérelem.
+						</div>
+					</div>
+					<div class="card">
+					  <div class="card-body">
+					  	<h4 th:text="#{jelszovalttext}">Jelszó változtatási kérelem küldése</h4>
+						<form th:action="@{/dolgozo/jelszo}" th:method="POST" th:object="${kerelem}">
+							<input th:type="hidden" th:name="profil_email" th:id="profil_email" th:field="*{email}" class="form-control" required>
+							<input th:type="hidden" th:field="*{tipus}" required>
+							<input th:type="submit" th:value="#{kuldes}" class="btn btn-primary mt-3">
+						</form>
+					  </div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+	</div>
+	<script layout:fragment="script" th:src="@{/js/profil.js}"></script>
+
+</body>
+</html>

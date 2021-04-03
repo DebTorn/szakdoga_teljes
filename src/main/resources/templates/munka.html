@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="hu" layout:decorator="layouts/main">
+	<head>
+		<title>Munkák</title>
+	</head>
+	<body>
+		<div layout:fragment="content">
+			<div class="container mt-3">
+				<div class="row">
+					<div class="col-sm-4">
+						<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#munkaidoModal" th:text="#{munkaidorog}">
+							Manuális munkaidõ rögzítés
+						</button>
+					</div>
+					<h3 class="text-center" th:text="#{munkak}">Munkák</h3>
+					<div class="col-sm-4">
+						<form method="POST" id="dolg_datum_form">
+							<div class="form-group">
+								<label for="ev_feltolt" th:text="#{ev}">Év</label>
+								<select id="ev_feltolt" required>
+									<option id="ev_option" selected disabled th:text="#{kivalasztas}">Kiválasztás</option>
+								</select>
+
+								<label for="honap_feltolt" th:text="#{honap}">Hónap(opcionális)</label>
+								<select id="honap_feltolt">
+									<option id="honap_option"></option>
+								</select>
+								<input type="submit" class="btn btn-secondary text-left" th:value="#{megjelenites}">
+							</div>
+							
+						</form>
+					</div>
+				</div>
+				<div class="row" sec:authorize="hasAuthority('USER')">
+					<div class="col-sm-12 table-responsive">
+						<table class="table table-striped mt-2 text-center" th:id="munkak_tabla">
+							<thead class="bg-dark text-white">
+								<tr>
+									<th th:text="#{munkavegzesdatum}">Munkavégzés dátuma</th>
+									<th th:text="#{projektneve}">Projekt neve</th>
+									<th th:text="#{tipus}">Munka típusa</th>
+									<th th:text="#{leiras}">Munka leírása</th>
+									<th th:text="#{raforditas}">Ráfordítás</th>
+									<th th:text="#{oraber}">Órabér</th>
+									<th th:text="#{osszeg}">Összeg</th>
+									<th th:text="#{modositas}">Módosítás</th>
+								</tr>
+							</thead>
+							<tbody>
+								
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="row" sec:authorize="hasAuthority('ADMIN')">
+					<div class="col-sm-12 table-responsive">
+						<table class="table table-striped mt-2 text-center" th:id="munkak_tabla">
+							<thead class="bg-dark text-white">
+								<tr>
+									<th th:text="#{munkavegzesdatum}">Munkavégzés dátuma</th>
+									<th th:text="#{projektneve}">Projekt neve</th>
+									<th th:text="#{tipus}">Munka típusa</th>
+									<th th:text="#{leiras}">Munka leírása</th>
+									<th th:text="#{raforditas}">Ráfordítás</th>
+									<th th:text="#{oraber}">Órabér</th>
+									<th th:text="#{osszeg}">Összeg</th>
+									<th sec:authorize="hasAuthority('ADMIN')" th:text="#{elszamolas}">Elszámolás</th>
+								</tr>
+							</thead>
+							<tbody>
+								<!--<tr th:each="munka : ${munkak}" th:id="${munka.id}">
+									<td th:id="datum" th:text="${munka.datum}"></td>
+									<td th:id="projekt" th:text="${munka.userpro.projekt.name}" th:value="${munka.userpro.projekt.id}"></td>
+									<td th:id="tipus">
+										<p th:if="${munka.tipus == 1}" th:text="programozás"></p>
+										<p th:if="${munka.tipus == 2}" th:text="tervezés"></p>
+										<p th:if="${munka.tipus == 3}" th:text="tesztelés"></p>
+										<p th:if="${munka.tipus == 4}" th:text="dokumentáció"></p>
+										<p th:if="${munka.tipus == 5}" th:text="támogatás"></p>
+										<p th:if="${munka.tipus == 6}" th:text="grafikaimunka"></p>
+										<p th:if="${munka.tipus == 7}" th:text="tartalomkezelés"></p>
+										<p th:if="${munka.tipus == 8}" th:text="egyéb"></p>
+									</td>
+									<td th:id="leiras" th:text="${munka.munkaleiras}"></td>
+									<td th:id="raforditas" th:value="${munka.raforditas}" th:text="${munka.raforditasAlakitas()}"></td>
+								</tr>-->
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			
+			<div sec:authorize="hasAuthority('ADMIN')" class="modal fade" id="elszamolasModal" tabindex="-1" aria-labelledby="elszamolasModalLabel" aria-hidden="true">
+		      <div class="modal-dialog">
+		        <div class="modal-content">
+		          <div class="modal-header">
+		            <h5 class="modal-title" id="elszamolasModalLabel" th:text="#{elszamolas}">Elszámolás</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		          </div>
+		          <div class="modal-body">
+		            <form method="POST" id="elszamolasForm">
+		              <div class="form-group">
+		                <label for="elszamDatum" th:text="#{datum}">Dátum:</label>
+		                <input type="date" name="elszamDatum" id="elszamDatum" class="form-control" required>
+		              </div>
+		              <div class="form-group">
+		                <label for="elszamOsszeg" th:text="#{osszeg}">Összeg:</label>
+		                <input type="number" name="elszamOsszeg" id="elszamOsszeg" class="form-control" required>
+		              </div>
+		              <input type="submit" th:value="#{elszamol}" class="btn btn-success">
+		            </form>
+		          </div>
+		        </div>
+		      </div>
+		    </div>
+			
+		<div class="modal fade" id="munkaidoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="munkaidoModalLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="munkaidoModalLabel" th:text="#{munkaidorog}">Munkaidõ rögzítése</h5>
+		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		      </div>
+		      <div class="modal-body">
+			    <div class="alert" role="alert" id="restAlertMunkaido"></div>
+		        <form th:id="munkaidoForm" method="POST">
+		        	<div class="form-group">
+		        		<label th:for="munidoProjektek" th:text="#{projektek}">Projektek:</label>
+		        		<select th:name="munidoProjektek" th:id="munidoProjektek" class="form-select" required>
+		        			
+		        		</select>
+		        	</div>
+		        	<div class="form-group mt-3">
+		        		<label th:for="munidoTipus" th:text="#{munkatip}">Munka típusa</label>
+		        		<select th:name="munidoTipus" th:id="munidoTipus" class="form-select" required>
+							<option th:each="tipus : ${tipusok}" th:value="${tipus.id}" th:text="${tipus.megnevezes}"></option>
+		        		</select>
+		        	</div>
+		        	<div class="form-group mt-3">
+		        		<label th:for="munidoDate" th:text="#{munkavegzesdatum}">Munkavégzés dátuma</label>
+		        		<select sec:authorize="hasAuthority('USER')" th:id="munidoDate" th:name="munidoDate" class="form-select" required>
+		        			
+		        		</select>
+		        		<input sec:authorize="hasAuthority('ADMIN')" class="form-control" type="date" th:id="munidoDate" th:name="munidoDate" required>
+		        	</div>
+		        	<div class="row mt-3">
+			        		<div class="col">	
+			        			<label th:for="munidoOra" th:text="#{ora}">Óra:</label>
+								<input type="number" th:name="munidoOra" th:id="munidoOra" min="0" max="23" class="form-control" required>
+			        		</div>
+							<div class="col">
+								<label th:for="munidoPerc" th:text="#{perc}">Perc:</label>
+								<select class="form-select" th:name="munidoPerc" th:id="munidoPerc" required>
+									<option value="0">0</option>
+									<option value="15">15</option>
+									<option value="30">30</option>
+									<option value="45">45</option>
+								</select>
+							</div>
+			        	</div>
+		        	<div class="form-group">
+		        		<label th:for="munidoLeiras" th:text="#{leiras}">Leírás</label>
+		        		<textarea th:id="munidoLeiras" th:name="munidoLeiras" class="form-control" maxlength="50" required></textarea>
+		        	</div>
+					<input sec:authorize="hasAuthority('USER')" th:type="hidden" th:id="dolgozoId" th:value="${principal}">
+					<input sec:authorize="hasAuthority('ADMIN')" th:type="hidden" th:id="dolgozoId" th:value="${id}">
+		        	<input th:type="submit" class="btn btn-primary mt-3">
+
+		        </form>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{bezaras}">BezÃ¡rÃ¡s</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		
+		<div sec:authorize="hasAuthority('USER')" class="modal fade" id="modositasModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modositasModalLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="modositasModalLabel" th:text="#{munkamodosit}">Munka módosítás</h5>
+		        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		      </div>
+		      <div class="modal-body">
+			    <div class="alert" role="alert" id="restAlertModositas"></div>
+		        <form th:id="modositasForm" method="POST">
+		        	<div class="form-group">
+		        		<label th:for="modositasProjektek" th:text="#{projektek}">Projektek:</label>
+		        		<select th:name="modositasProjektek" th:id="modositasProjektek" class="form-select" required>
+		        			
+		        		</select>
+		        	</div>
+		        	<div class="form-group mt-3">
+		        		<label th:for="modositasTipus" th:text="#{munkatip}">Munka típusa</label>
+		        		<select th:name="modositasTipus" th:id="modositasTipus" class="form-select" required>
+							<option th:each="tipus : ${tipusok}" th:value="${tipus.id}" th:text="${tipus.megnevezes}"></option>
+		        		</select>
+		        	</div>
+		        	<div class="form-group mt-3">
+		        		<label th:for="modositasDate" th:text="#{munkavegzesdatum}">Munkavégzés dátuma</label>
+		        		<select th:id="modositasDate" th:name="modositasDate" class="form-select" required>
+		        			
+		        		</select>
+		        	</div>
+		        	<div class="row mt-3">
+			        		<div class="col">	
+			        			<label th:for="modositasOra" th:text="#{ora}">Óra:</label>
+								<input type="number" th:name="modositasOra" th:id="modositasOra" min="0" max="23" class="form-control" required>
+			        		</div>
+							<div class="col">
+								<label th:for="modositasPerc" th:text="#{perc}">Perc:</label>
+								<select class="form-select" th:name="modositasPerc" th:id="modositasPerc" required>
+									<option value="0">0</option>
+									<option value="15">15</option>
+									<option value="30">30</option>
+									<option value="45">45</option>
+								</select>
+							</div>
+			        	</div>
+		        	<div class="form-group">
+		        		<label th:for="modositasLeiras" th:text="#{leiras}">Leírás</label>
+		        		<textarea th:id="modositasLeiras" th:name="modositasLeiras" class="form-control" maxlength="50" required></textarea>
+		        	</div>
+					<input th:type="hidden" th:id="modositasMunId">
+					<input th:type="hidden" th:id="modositasUserId" th:value="${principal}">
+		        	<input th:type="submit" class="btn btn-primary mt-3">
+
+		        </form>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{bezaras}">BezÃ¡rÃ¡s</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-12 table-responsive">
+					<table class="table table-striped text-center" id="osszesito_tabla">
+						<thead>
+							<tr>
+								<th th:text="#{munkanapok}">Munkanapok</th>
+								<th th:text="#{raforditasOsszesen}">Ráfordítás összesen</th>
+								<th th:text="#{atlagOradij}">Átlag óradíj</th>
+								<th th:text="#{teljesOsszeg}">Teljes összeg</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td id="napok"></td>
+								<td id="raforditasOssz"></td>
+								<td id="atlagOradij"></td>
+								<td id="teljesOsszeg"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		</div>
+		
+		<script sec:authorize="hasAuthority('USER')" layout:fragment="script" th:src="@{/js/dolgozoMunka.js}"></script>
+		<script sec:authorize="hasAuthority('ADMIN')" layout:fragment="script2" th:src="@{/js/adminDolgozoMunka.js}"></script>
+		
+	</body>
+</html>

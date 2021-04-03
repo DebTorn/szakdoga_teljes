@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="hu" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org/" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta th:name="_csrf" th:content="${_csrf.token}"/>
+	<meta th:name="_csrf_header" th:content="${_csrf.headerName}"/>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+	
+	<script src="https://unpkg.com/@popperjs/core@2"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+	<script src="/js/jquery.js"></script>
+	<script>
+		$(document).ready(function(){
+			var token = $("meta[name='_csrf']").attr("content"); 
+			var header = $("meta[name='_csrf_header']").attr("content");
+			
+			$(document).ajaxSend(function (e, xhr, options) {
+		        xhr.setRequestHeader(header, token);
+		    });
+		});
+	</script>
+</head>
+
+<body>
+	
+	<header>
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		  <div class="container-fluid">
+		    <a class="navbar-brand" href="/">Munkanyilvántartó</a>
+		    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+		      <span class="navbar-toggler-icon"></span>
+		    </button>
+		    <div class="collapse navbar-collapse" id="navbarNav">
+		      <ul class="navbar-nav">
+		        <li class="nav-item">
+		          	<a class="nav-link active" aria-current="page" sec:authorize="hasAuthority('USER')" th:href="@{/dolgozo/profil}">Profil</a>
+		        </li>
+		        <li class="nav-item" sec:authorize="hasAuthority('USER')">
+		        	<a class="nav-link active" aria-current="page" sec:authorize="hasAuthority('USER')" th:href="@{/dolgozo/munka}">Munkák</a>
+		        </li>
+		        <li class="nav-item" sec:authorize="hasAuthority('ADMIN')">
+		        	<a class="nav-link active" aria-current="page" sec:authorize="hasAuthority('ADMIN')" th:href="@{/admin/ugyfel}">Ügyfelek</a>
+		        </li>
+		        <li class="nav-item" sec:authorize="hasAuthority('ADMIN')">
+		        	<a class="nav-link active" aria-current="page" sec:authorize="hasAuthority('ADMIN')" th:href="@{/admin/dolgozo}">Dolgozók</a>
+		        </li>
+		        <li class="nav-item" sec:authorize="hasAuthority('ADMIN')">
+		        	<a class="nav-link active" aria-current="page" sec:authorize="hasAuthority('ADMIN')" th:href="@{/admin/projekt}">Projektek</a>
+		        </li>
+		        <li class="nav-item" sec:authorize="hasAuthority('ADMIN')">
+		        	<a class="nav-link active" aria-current="page" sec:authorize="hasAuthority('ADMIN')" th:href="@{/admin/elszamolas}">Munkák</a>
+		        </li>
+		        <li class="d-flex">
+		        	Üdvözöljük <span sec:authentication="name"> Ismeretlen</span>!
+			        <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="POST">
+			        	<button type="submit" class="btn btn-danger">Kijelentkezés</button>
+			        </form>
+		        </li>
+		      </ul>
+		    </div>
+		  </div>
+		</nav>
+	</header>
+	<div class="container">
+		<div class="row d-felx justify-content-center">
+			<div class="col-sm-8">
+					<div class="alert text-center h5 mt-4" role="alert" id="popModal"></div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="biztos" tabindex="-1" style="z-index:1051;" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-body">
+	        <p th:id="biztosText"></p>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-success" th:id="igenBiztos">Igen</button>
+	        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Nem</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	
+	<div layout:fragment="content"></div>
+	<footer layout:fragment="footer">
+	</footer>
+	
+	<script layout:fragment="script"></script>
+	<script layout:fragment="script2"></script>
+</body>
+
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="hu" layout:decorator="layouts/main">
+<head>
+	<title>Dashboard</title>
+</head>
+<body>
+
+	<div layout:fragment="content">
+		<div class="container" sec:authorize="hasAuthority('ADMIN')">
+			<div class="col-sm-12">
+				<table>
+					<thead>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th></th>
+					</thead>
+					<tbody>
+						<tr></tr>
+						<tr></tr>
+						<tr></tr>
+						<tr></tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>
